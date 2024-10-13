@@ -1,0 +1,1 @@
+Copy and paste all these dlls into the folder where your compiled .exe is
