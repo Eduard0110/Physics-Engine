@@ -1,5 +1,0 @@
-C:/Users/golon/source/repos/SFMLphysics/out/build/x64-debug/CMakeFiles/edit_cache.dir
-C:/Users/golon/source/repos/SFMLphysics/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
-C:/Users/golon/source/repos/SFMLphysics/out/build/x64-debug/SFMLphysics/CMakeFiles/SFMLphysics.dir
-C:/Users/golon/source/repos/SFMLphysics/out/build/x64-debug/SFMLphysics/CMakeFiles/edit_cache.dir
-C:/Users/golon/source/repos/SFMLphysics/out/build/x64-debug/SFMLphysics/CMakeFiles/rebuild_cache.dir
