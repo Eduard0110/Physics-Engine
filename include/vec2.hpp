@@ -7,10 +7,10 @@
 
 class Vec2 {
 public:
-    float x, y;
+    double x, y;
 
     Vec2() : x(0), y(0) {}
-    Vec2(float x, float y) : x(x), y(y) {}
+    Vec2(double x, double y) : x(x), y(y) {}
 
     Vec2& operator+=(const Vec2& other) {
         x += other.x;
@@ -24,7 +24,7 @@ public:
         return *this;
     }
 
-    Vec2& operator*=(float scalar) {
+    Vec2& operator*=(double scalar) {
         x *= scalar;
         y *= scalar;
         return *this;
@@ -38,20 +38,20 @@ public:
         return Vec2(x - other.x, y - other.y);
     }
 
-    Vec2 operator*(float scalar) const {
+    Vec2 operator*(double scalar) const {
         return Vec2(x * scalar, y * scalar);
     }
 
-    float Dot(const Vec2& other) const {
+    double Dot(const Vec2& other) const {
         return x * other.x + y * other.y;
     }
 
-    float Length() const {
+    double Length() const {
         return std::sqrt(x * x + y * y);
     }
 
     Vec2 Normalize() const {
-        float len = Length();
+        double len = Length();
         return len > 0 ? Vec2(x / len, y / len) : Vec2(0, 0);
     }
 

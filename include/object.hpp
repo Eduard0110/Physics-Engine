@@ -8,13 +8,20 @@ class Object {
 public:
 	Vec2 c_pos;  // current position
 	Vec2 p_pos;  // previous position
-	Vec2 vel;    // velocity
+	Vec2 acc;    // acceleration
 	double r;    // radius
 
-	Object(Vec2 cp, Vec2 pp, Vec2 v, double r) : c_pos(cp), p_pos(pp), vel(v), r(r) {}
+	Object(Vec2 cp, Vec2 pp, Vec2 a, double r) : c_pos(cp), p_pos(pp), acc(a), r(r) {}
 
+	// Function declarations
+	void printInfo();
+	void update(double dt);
+	void constrainWalls(double width, double height);
+	Vec2 applyForces();
+
+	// Overload equality operator
 	bool operator==(const Object& other) const {
-		return c_pos == other.c_pos && p_pos == other.p_pos && vel == other.vel && r == other.r;
+		return c_pos == other.c_pos && p_pos == other.p_pos && acc == other.acc && r == other.r;
 	}
 };
 
