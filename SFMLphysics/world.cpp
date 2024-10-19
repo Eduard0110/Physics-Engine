@@ -2,11 +2,15 @@
 
 
 void World::update(double dt) {
-
+    for (size_t i = 0; i < m_objects.size(); ++i) {
+        m_objects[i].update(dt);
+        m_objects[i].constrainWalls(width, height);
+    }
 }
 
-void World::addObject(Vec2 cp, Vec2 pp, Vec2 v, double r) {
-    Object object(cp, pp, v, r);
+
+void World::addObject(Vec2 cp, Vec2 pp, Vec2 acc, double r) {
+    Object object(cp, pp, acc, r);
     m_objects.push_back(object);
 }
 

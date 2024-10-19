@@ -5,6 +5,7 @@
 # Add source to this project's executable.
 set(SOURCE_FILES
 	main.cpp
+	demo.cpp
 	world.cpp
 	object.cpp)
 
