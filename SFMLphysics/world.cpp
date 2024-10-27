@@ -4,7 +4,7 @@
 void World::update(double dt) {
     for (size_t i = 0; i < m_objects.size(); ++i) {
         m_objects[i].update(dt);
-        m_objects[i].constrainWalls(width, height);
+        m_objects[i].constrainWalls(width, height, bounceDamping, frictionCoefficient);
     }
 }
 
