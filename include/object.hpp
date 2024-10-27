@@ -16,7 +16,7 @@ public:
 	// Function declarations
 	void printInfo();
 	void update(double dt);
-	void constrainWalls(double width, double height);
+	void constrainWalls(double width, double height, const double damping, const double frictionCoefficient);
 	Vec2 applyForces();
 
 	// Overload equality operator

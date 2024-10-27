@@ -1,8 +1,9 @@
 #ifndef DEMO_HPP
 #define DEMO_HPP
 
-#include <algorithm>
 #include <SFML/Graphics.hpp>
+#include <algorithm>
+#include <random>
 #include "world.hpp"
 
 class Demo {
