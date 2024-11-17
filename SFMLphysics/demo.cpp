@@ -1,41 +1,56 @@
 #include "demo.hpp"
 
+// constructor
+Demo::Demo(double width, double height)
+    : width(width), height(height), window(sf::VideoMode(width, height), "Physics Simulation") {
 
-Demo::Demo(int width, int height) : width(width), height(height), window(sf::VideoMode(width, height), "Physics Simulation") {
+    // initialize window settings
     window.setVerticalSyncEnabled(true);
 
-    // Random number generation setup
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> posDistX(0.0, width);   // random x position
-    std::uniform_real_distribution<> posDistY(0.0, height);  // random y position
-    std::uniform_real_distribution<> radiusDist(5.0, 20.0);  // random radius between 5 and 20
-    std::uniform_real_distribution<> velDist(-50.0, 50.0);   // random velocity between -50 and 50 for x and y
+    // load font and initialise text objects
+    initialiseText(fpsText, 20, { 10.f, 10.f });
+    initialiseText(objectCountText, 20, { 10.f, 40.f });
+}
 
-    // Create multiple random bouncing balls
-    int numberOfBalls = 10;
-    for (int i = 0; i < numberOfBalls; ++i) {
-        double radius = radiusDist(gen);
-        Vec2 position(posDistX(gen), posDistY(gen));
-        Vec2 previousPosition(position.x + velDist(gen) * 0.1,
-            position.y + velDist(gen) * 0.1);
-        Vec2 acceleration(velDist(gen), velDist(gen));
+// mouse control for adding objects
+void Demo::mouseControl() {
+    static std::mt19937 rng(static_cast<unsigned>(std::time(nullptr)));
+    std::uniform_real_distribution<double> distXY(-1.0, 1.0);
+    std::uniform_real_distribution<double> distRadius(5.0, 25.0);
 
-        world.addObject(position, previousPosition, acceleration, radius);
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        sf::Vector2i pos = sf::Mouse::getPosition(window);
+        Vec2 newPosition(pos.x, pos.y);
+        double newRadius = distRadius(rng);
+
+        // Check for overlapping objects before adding
+        if (!isOverlapping(newPosition, newRadius)) {
+            world.addObject(
+                newPosition,                                  // current position
+                newPosition - Vec2(distXY(rng), distXY(rng)), // previous position (randomized velocity)
+                Vec2(0.0, 0.0),                               // acceleration
+                newRadius                                     // random radius
+            );
+        }
     }
 }
 
-
 void Demo::run() {
+    uint32_t frameCount = 0;
+
     while (window.isOpen()) {
+        frameCount++;
         processEvents();
-        double dt = (double) deltaClock.restart().asSeconds();
-        dt = std::min(dt, minDt);  // Now both are double
-        update(dt);
+        mouseControl();
+
+        double dt = deltaClock.restart().asSeconds();
+        updateFPS(frameCount, dt);
+        update(std::min(dt, minDt));  // limit dt to avoid large changes in dt
         render();
     }
 }
 
+// handle events
 void Demo::processEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -44,34 +59,68 @@ void Demo::processEvents() {
     }
 }
 
+// update world
 void Demo::update(double dt) {
     world.update(dt);
-    world.m_objects[0].printInfo();
 }
 
+// Draw objects in the world
 void Demo::drawObjects() {
     for (const auto& obj : world.m_objects) {
         sf::CircleShape circle(obj.r);
-        circle.setPosition(obj.c_pos.x - obj.r, obj.c_pos.y - obj.r); // set the position (adjusting for radius)
-
-        // normalize ratios
-        float xRatio = obj.c_pos.x / window.getSize().x;
-        float yRatio = obj.c_pos.y / window.getSize().y;
-        // the colour changes depending on position
-        sf::Uint8 red = static_cast<sf::Uint8>(255 * xRatio);
-        sf::Uint8 green = static_cast<sf::Uint8>(255 * yRatio);
-        sf::Uint8 blue = static_cast<sf::Uint8>(255 * (1.0f - xRatio));
-
-        sf::Color colour = sf::Color(red, green, blue);
-
-        circle.setFillColor(colour);
+        circle.setPosition(obj.c_pos.x - obj.r, obj.c_pos.y - obj.r); // Adjust for radius
+        circle.setFillColor(calculateColour(obj.c_pos));
         window.draw(circle);
     }
 }
 
-
+// render window
 void Demo::render() {
     window.clear();
     drawObjects();
+    window.draw(fpsText);
+    window.draw(objectCountText);
     window.display();
+}
+
+// initialize text objects
+void Demo::initialiseText(sf::Text& text, unsigned int charSize, sf::Vector2f position) {
+    if (!font.loadFromFile("assets/arial.ttf")) {
+        std::cerr << "Error loading font" << std::endl;
+    }
+    text.setFont(font);
+    text.setCharacterSize(charSize);
+    text.setFillColor(sf::Color::White);
+    text.setPosition(position);
+}
+
+// check for overlap with existing objects
+bool Demo::isOverlapping(const Vec2& position, double radius) const {
+    for (const Object& obj : world.m_objects) {
+        if (obj.c_pos.Distance(position) < (obj.r + radius)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// update FPS
+void Demo::updateFPS(uint32_t frameCount, double dt) {
+    double fps = 1.0 / dt;
+    if (frameCount % 30 == 0) {
+        fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
+    }
+    objectCountText.setString("Objects: " + std::to_string(world.m_objects.size()));
+}
+
+// calculate colour based on object position
+sf::Color Demo::calculateColour(const Vec2& position) const {
+    float xRatio = position.x / width;
+    float yRatio = position.y / height;
+
+    sf::Uint8 red = static_cast<sf::Uint8>(255 * xRatio);
+    sf::Uint8 green = static_cast<sf::Uint8>(255 * yRatio);
+    sf::Uint8 blue = static_cast<sf::Uint8>(255 * (1.0f - xRatio));
+
+    return sf::Color(red, green, blue);
 }

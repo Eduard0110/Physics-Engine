@@ -1,56 +1,44 @@
 #include "object.hpp"
 
+// Verlet Integration
+// new_pos = 2 * current_pos - previous_pos + acc * dt^2
+// or
+// velocity = c_pos - p_pos (change in current and previous positions)
+// new_pos += velocity + acc * dt^2 
 void Object::update(double dt) {
-	Vec2 new_pos = c_pos * 2.0 - p_pos + acc * dt;
-	Vec2 new_acc = applyForces();
-
-	p_pos = c_pos;
-	c_pos = new_pos;
-	acc = new_acc;
+    Vec2 velocity = c_pos - p_pos;         // calculate velocity
+    p_pos = c_pos;                         // save current position into previous
+    c_pos += velocity + acc * (dt * dt);   // update current position
+    acc = Vec2(0.0, 0.0);                  // reset acceleration
 }
 
-void Object::constrainWalls(double width, double height, const double damping, const double frictionCoefficient) {
-    Vec2 dpos = (c_pos - p_pos);  // Change in positions (velocity)
+// constraints the objects from moving beyond walls
+void Object::constrainWalls(double width, double height, double damping, double frictionCoefficient) {
+    Vec2 vel = c_pos - p_pos;
 
-    // Left wall
-    if ((c_pos.x - r) <= 0.0) {
-        p_pos = c_pos - dpos * frictionCoefficient;  // apply friction
+    applyWallConstraint(c_pos.x - r <= 0.0, c_pos.x, p_pos.x, r, frictionCoefficient, damping, vel.x);          // Left wall
+    applyWallConstraint(c_pos.x + r >= width, c_pos.x, p_pos.x, width - r, frictionCoefficient, damping, vel.x); // Right wall
+    applyWallConstraint(c_pos.y - r <= 0.0, c_pos.y, p_pos.y, r, frictionCoefficient, damping, vel.y);          // Top wall
+    applyWallConstraint(c_pos.y + r >= height, c_pos.y, p_pos.y, height - r, frictionCoefficient, damping, vel.y); // Bottom wall
+}
 
-        c_pos.x = r;
-        p_pos.x = c_pos.x + dpos.x * damping;
-    }
-    // Right wall
-    if ((c_pos.x + r) >= width) {
-        p_pos = c_pos - dpos * frictionCoefficient;  // apply friction
-
-        c_pos.x = width - r;
-        p_pos.x = c_pos.x + dpos.x * damping;
-    }
-    // Top wall (ceiling)
-    if ((c_pos.y - r) <= 0.0) {
-        p_pos = c_pos - dpos * frictionCoefficient;  // apply friction
-        c_pos.y = r;
-        p_pos.y = c_pos.y + dpos.y * damping;
-    }
-    // Bottom wall (floor)
-    if ((c_pos.y + r) >= height) {
-        p_pos = c_pos - dpos * frictionCoefficient;  // apply friction
-
-        c_pos.y = height - r;
-        p_pos.y = c_pos.y + dpos.y * damping;
+// apply constrain to a single wall
+void Object::applyWallConstraint(bool hitWall, double& c_pos, double& p_pos, double wallPos,
+    double friction, double damping, double velocityComponent) {
+    if (hitWall) {
+        p_pos -= velocityComponent * friction;
+        c_pos = wallPos;
+        p_pos = c_pos + velocityComponent * damping;
     }
 }
 
-Vec2 Object::applyForces() {
-	Vec2 gravity_acceleration = Vec2(0.0, 9.81);
-	return gravity_acceleration;
+// apply a force to the object
+void Object::accelerate(Vec2 acceleration) {
+    acc += acceleration;
 }
 
-
-void Object::printInfo() {
-	// std::cout << "CP: " << c_pos << std::endl;
-	// std::cout << "PP: " << p_pos << std::endl;
-	std::cout << "VEL: " << c_pos - p_pos << std::endl;
-	std::cout << "ACC: " << acc << std::endl;
-	std::cout << std::endl;
+// print object info (for debugging)
+void Object::printInfo() const {
+    std::cout << "Velocity: " << c_pos - p_pos << "\n";
+    std::cout << "Acceleration: " << acc << "\n\n";
 }
