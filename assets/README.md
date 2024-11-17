@@ -1,0 +1,1 @@
+Copy and paste this folder into the folder where your compiled .exe is
