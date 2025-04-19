@@ -10,6 +10,22 @@ Demo::Demo(double width, double height)
     // load font and initialise text objects
     initialiseText(fpsText, 20, { 10.f, 10.f });
     initialiseText(objectCountText, 20, { 10.f, 40.f });
+
+    world.addObject(Vec2(100, 100),
+                    Vec2(99, 98),
+                    Vec2(0, 0),
+                    10.0);
+    world.addObject(Vec2(200, 200),
+                    Vec2(198, 197),
+                    Vec2(0, 0),
+                    10.0);
+
+    world.addLink(
+        &world.m_objects[0],
+        &world.m_objects[1],
+        0.5,
+        10
+    );
 }
 
 // mouse control for adding objects
