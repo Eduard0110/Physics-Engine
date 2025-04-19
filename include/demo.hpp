@@ -12,6 +12,10 @@ public:
     void run();
 
 private:
+    // movement
+    Object* draggedObject = nullptr;
+    bool isDragging = false;
+
     // Constants
     const double minDt = 1.0 / 60.0;
 
@@ -33,9 +37,19 @@ private:
 
     // drawing and control functions
     void drawObjects();
-    void mouseControl();
-
+    void drawLinks();
     void drawCells();
+    void mouseControl();
+    void dragObject();
+    void removeObjects();
+    void handleInput(sf::Event event);
+    void clear_all();
+    void updateTitle();
+
+    void create_cloth(int rows, int columns, float step = 6.25f,
+        int statick_step = 3,
+        Vec2 initial_pos = Vec2(100, 10),
+        double ball_r = 10.0);
 
     // helper functions
     void initialiseText(sf::Text& text, unsigned int charSize, sf::Vector2f position);

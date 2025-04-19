@@ -15,19 +15,29 @@ public:
     void printInfo() const;
 
     bool operator==(const Object& other) const {
-        return c_pos == other.c_pos && p_pos == other.p_pos && acc == other.acc && r == other.r;
+        return c_pos == other.c_pos &&
+            p_pos == other.p_pos &&
+            acc == other.acc &&
+            r == other.r;
     }
 
-    // member variables
-    Vec2 c_pos;  // current position
-    Vec2 p_pos;  // previous position
-    Vec2 acc;    // acceleration
-    double r;    // radius
+    // Member variables
+    Vec2 c_pos;   // Current position
+    Vec2 p_pos;   // Previous position
+    Vec2 acc;     // Acceleration
+    double r;     // Radius
+    bool isStatic = false;
 
 private:
-    // helper functions
-    void applyWallConstraint(bool hitWall, double& pos, double& prevPos, double wallPos,
-        double friction, double damping, double velocityComponent);
+    void applyWallConstraint(
+        bool hitWall,
+        double& pos,
+        double& prevPos,
+        double wallPos,
+        double friction,
+        double damping,
+        double velocityComponent
+    );
 };
 
 #endif

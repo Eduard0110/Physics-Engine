@@ -1,3 +1,6 @@
+#ifndef COLLISIONSOLVER_HPP
+#define COLLISIONSOLVER_HPP
+
 #include <vector>
 #include "grid.hpp"
 
@@ -19,7 +22,7 @@ public:
                         checkCellsCollisions(current_cell, other_cell);
                     }
                 }
-           }
+            }
         }
     }
 
@@ -27,7 +30,7 @@ private:
     void checkCellsCollisions(Cell& cellA, Cell& cellB) {
         for (Object* objA : cellA.objects) {
             for (Object* objB : cellB.objects) {
-                if (objA != objB) {
+                if (objA != objB && objA < objB) { // avoid duplicate checks
                     checkCollision(*objA, *objB);
                 }
             }
@@ -48,11 +51,13 @@ private:
     // move each object by half of the overlap length into opposite directions
     void resolveCollision(Object& A, Object& B, double dist) {
         const Vec2 collision_axis = A.c_pos - B.c_pos;
-        const Vec2 n = collision_axis * ( 1.0 / dist);
+        const Vec2 n = collision_axis * (1.0 / dist);
         const float overlap = (A.r + B.r) - dist;
         const Vec2 delta = n * (overlap * 0.5);  // half the length of the overlap
-        A.c_pos += delta;
-        B.c_pos -= delta;
+        if (!A.isStatic) A.c_pos += delta;
+        if (!B.isStatic) B.c_pos -= delta;
     }
 
 };
+
+#endif
