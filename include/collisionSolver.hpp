@@ -1,19 +1,39 @@
 #include <vector>
-#include "object.hpp"
+#include "grid.hpp"
 
 class CollisionSolver {
 public:
     // checks for collisions between objects
     // and resolves them if they occur
-    void solveCollisions(std::vector<Object>& objects) {
-        for (size_t i = 0; i < objects.size(); ++i) {
-            for (size_t j = i + 1; j < objects.size(); ++j) {
-                checkCollision(objects[i], objects[j]);
-            }
+
+    void solveCollisions(Grid* grid) {
+        // iterate through the grid skipping cells next to walls
+        for (int x = 1; x < grid->columns - 1; ++x) {
+            for (int y = 1; y < grid->rows - 1; ++y) {
+
+                Cell& current_cell = grid->grid[y][x];
+                // iterate through surrounding cells (including the current cell)
+                for (int dx = -1; dx <= 1; ++dx) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        Cell& other_cell = grid->grid[y + dy][x + dx];
+                        checkCellsCollisions(current_cell, other_cell);
+                    }
+                }
+           }
         }
     }
 
 private:
+    void checkCellsCollisions(Cell& cellA, Cell& cellB) {
+        for (Object* objA : cellA.objects) {
+            for (Object* objB : cellB.objects) {
+                if (objA != objB) {
+                    checkCollision(*objA, *objB);
+                }
+            }
+        }
+    }
+
     void checkCollision(Object& A, Object& B) {
         // calculate the distance between the two object centres
         double dist = A.c_pos.Distance(B.c_pos);

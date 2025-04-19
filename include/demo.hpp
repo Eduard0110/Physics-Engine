@@ -35,6 +35,8 @@ private:
     void drawObjects();
     void mouseControl();
 
+    void drawCells();
+
     // helper functions
     void initialiseText(sf::Text& text, unsigned int charSize, sf::Vector2f position);
     bool isOverlapping(const Vec2& position, double radius) const;
