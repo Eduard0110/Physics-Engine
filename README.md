@@ -1,5 +1,7 @@
 # Physics Engine
 
+<img width="1919" height="1018" alt="image" src="https://github.com/user-attachments/assets/ca81b547-4bea-4f84-b326-ef89c0b589d7" />
+
 This project is a 2D physics simulation written in C++ and powered by SFML. It uses Verlet integration for smooth motion, handles circular rigid-body collisions, and includes simple wall constraints to keep objects within bounds. You can link objects together with spring-like connections, while a spatial grid system ensures collision checks stay fast and efficient. In the demo window, you can spawn, drag, delete, and connect objects to create interactive, cloth-like simulations in real time.
 
 ## Features
