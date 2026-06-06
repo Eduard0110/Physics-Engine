@@ -106,7 +106,7 @@ void Demo::handleInput(sf::Event event) {
             break;
         case sf::Keyboard::S:
             clear_all();
-            create_cloth(12 * 8, 35 * 8);
+            create_cloth(75, 180, 10.0f, 5, Vec2(80, 10), 7.0);
             break;
         case sf::Keyboard::Num1:
             world.b_Collisions = !world.b_Collisions;
